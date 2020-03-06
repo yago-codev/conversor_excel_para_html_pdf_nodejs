@@ -1,0 +1,85 @@
+01) Criando a Classe de Leitura de Arquivos CSV(Excel):
+
+    01.1) Criando o arquivo:
+
+          Leitor.js
+
+    01.2) Declarando a Classe:
+
+          class Leitor {
+  
+          }
+
+    01.3) Declarando o método responsável por efetuar a leitura do CSV:
+
+          O método Ler() irá receber 1 parâmetro, 
+          que será o caminho até o arquivo que será lido:
+
+          class Leitor {
+            Ler(caminhoArquivo) {
+              
+            }
+          }
+
+    01.4) Importanto o file-system para poder ler o arquivo:
+
+          const fs = require('fs'); <==
+
+          class Leitor {
+            Ler(caminhoArquivo) {
+
+            }
+          }
+
+    01.5) Utilizando a função readFile para ler o arquivo:
+
+          const fs = require('fs');
+
+          class Leitor {
+            Ler(caminhoArquivo) {
+              fs.readFile(caminhoArquivo, 'utf-8', (erro, dados) => {
+                if (erro) 
+                  console.log('Houve um erro ao tentar ler o arquivo, por favor, tente novamente!');
+                else 
+                  console.log(dados);
+              });
+            };
+          };
+
+    01.6) Exportando a Classe:
+
+          const fs = require('fs');
+
+          class Leitor {
+            Ler(caminhoArquivo) {
+              fs.readFile(caminhoArquivo, 'utf-8', (erro, dados) => {
+                if (erro) 
+                  console.log('Houve um erro ao tentar ler o arquivo, por favor, tente novamente!');
+                else 
+                  console.log(dados);
+              });
+            };
+          };
+
+          module.exports = Leitor; <==
+
+02) Importando a Classe Leitor dentro do arquivo principal da aplicação(app.js):
+
+    const Leitor = require('./Leitor');
+
+03) Instanciando um objeto da Classe Leitor para testar se tudo está funcionando:
+
+    const Leitor = require('./Leitor');
+
+    const teste_leitura = new Leitor();
+
+    const arquivo_lido = './arquivo.csv';
+
+    teste_leitura.Ler(arquivo_lido);
+
+04) Até o momento não estamos retornando os dados dentro da função readFile().
+    Isso acontece porque ela não retorna uma promise() e 
+    também não é possível utilizar async/await com ela. 
+
+    Posteriormente será feita uma adaptação, 
+    utilizando o Promisify!

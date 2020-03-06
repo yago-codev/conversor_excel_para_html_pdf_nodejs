@@ -1,0 +1,124 @@
+01) No momento estamos lendo o arquivo e tudo está como uma string. 
+    Poderíamos tratar esses dados dentro da própria classe de leitura, 
+    mas não faremos isso, pois estaríamos sobrecarregando-a sem ter necessidade. 
+
+    A seguir criaremos uma classe separada para lidar somente com 
+    o tratamento dos dados lidos, 
+    convertendo-os em um array. 
+
+02) Criando arquivo da classe:
+
+    Processador.js
+
+03) Definindo a Classe e já exportando-a para não esquecermos:
+
+    class Processador {
+  
+    }
+
+    module.exports = Processador;
+
+04) Dentro dessa classe iremos definir apenas um método estático que 
+    será o método que irá processar os dados lidos,
+    convertendo-os em um array. 
+
+    class Processador {
+      static ProcessaDados(dados) {
+        
+      }
+    };
+
+    module.exports = Processador;
+
+05) Utilizando o split para converter os dados recebidos da leitura do arquivo(string) em um array. 
+    Utilizaremos o '\r\n' como parâmetro pro split, 
+    fazendo com que a cada quebra de linha seja criado um novo índice no array. 
+
+    class Processador {
+      static ProcessaDados(dados) {
+        let dadosProcessados = dados.split('\r\n');
+        console.log(dadosProcessados);
+      }
+    };
+
+    module.exports = Processador;
+
+06) Instanciando a classe Processador dentro do arquivo principal da aplicação para testarmos:
+
+    const Leitor = require('./Leitor');
+    const Processador = require('./Processador'); <==
+
+    const teste_leitura = new Leitor();
+
+    const arquivo = './arquivo.csv';
+
+    async function main() {
+      const dados = await teste_leitura.Ler(arquivo);
+      console.log(dados);
+    };
+
+    main();
+
+07) Agora dentro da função main poderemos utilizar o método estático ProcessarDados.
+
+    OBS: Como trata-se de um método estático, 
+    não precisaremos instanciar um objeto,
+    podemos chamar diretamente a classe:
+
+    const Leitor = require('./Leitor');
+    const Processador = require('./Processador');
+
+    const teste_leitura = new Leitor();
+
+    const arquivo = './arquivo.csv';
+
+    async function main() {
+      const dados = await teste_leitura.Ler(arquivo);
+
+      Processador.ProcessarDados(dados);
+    };
+
+    main();
+
+08) Os dados retornados através do split() estão criando uma string para 
+    cada linha lida no arquivo Excel.
+
+    [
+      'Nome,Curso,Categoria,Tipo',
+      'Yago,Curso Node,Node,1',
+      'Vithor,Curso React,React,2',
+      'Isadora,Curso React Native,React Native,3'
+    ]
+
+    O objetivo a seguir é transformarmos cada uma dessas strings em um array.
+    Para fazermos isso, 
+    iremos criar uma variável com um array vazio.
+    Esse array vazio irá receber cada um desses elementos do array que
+    será percorrido com um forEach. 
+
+    class Processador {
+      static ProcessarDados(dados) {
+        let array_dados = dados.split('\r\n');
+        let linhas = []; <==
+
+        array_dados.forEach(elemento => { <==
+          let dados_processados = elemento.split(','); <==
+          linhas.push(dados_processados); <==
+        }); <==
+
+        return linhas;
+      };
+    };
+
+    module.exports = Processador;
+
+    Retorno obtido:
+
+    [
+      [ 'Nome', 'Curso', 'Categoria', 'Tipo' ],
+      [ 'Yago', 'Curso Node', 'Node', '1' ],
+      [ 'Vithor', 'Curso React', 'React', '2' ],
+      [ 'Isadora', 'Curso React Native', 'React Native', '3' ]
+    ]
+
+09) 

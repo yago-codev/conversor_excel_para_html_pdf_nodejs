@@ -1,0 +1,118 @@
+01) Utilizando Promisify:
+
+    Porque?
+    Existem funções que utilizam versões extremamente antigas do JS.
+    Tais funções são anteriores a feature de Promises.
+
+    A função que estamos utilizando para realizar a 
+    leitura de arquivos é um desses casos.
+    Ou seja, 
+    essa função é assíncrona, e utiliza callbacks,
+    ela não utiliza o conceito de Promise.
+
+    Em resumo, 
+    isso significa que não conseguiremos utilizar async/await, 
+    pois eles só funcionam com Promises. 
+
+    Resumindo mais ainda, 
+    não conseguiremos retornar dados da função
+    readFile()
+
+    A seguir, 
+    utilizaremos a biblioteca Promisify, 
+    nativa do Node, 
+    para Promissificar a função readFile().
+
+02) Importando Promisify:
+
+    OBS: O Promisify é uma função da biblioteca 'util'
+
+    const fs = require('fs');
+    const util = require('util'); <==
+
+    class Leitor {
+      Ler(caminhoArquivo) {
+        fs.readFile(caminhoArquivo, 'utf-8', (erro, dados) => {
+          if (erro) 
+            console.log('Houve um erro ao tentar ler o arquivo, por favor, tente novamente!');
+          else 
+            console.log(dados);
+        });
+      };
+    };
+
+    module.exports = Leitor;
+
+03) Exemplo de utilização do Promisify:
+
+    A função promisify irá receber outra função que 
+    utilize o padrão de callbacks,
+    então o promisify irá retornar uma nova função que armazenaremos em uma variável:
+
+    var funcaoNovaComPromise = util.promisify(funcaoVelhaComCallback);
+
+04) Declarando método construtor para criar um atributo que irá promissificar a função readFile:
+
+    const fs = require('fs');
+    const util = require('util');
+
+    class Leitor {
+      constructor() { <==
+        this.leitor = util.promisify(fs.readFile); <==
+      }; <==
+
+      Ler(caminhoArquivo) {
+        fs.readFile(caminhoArquivo, 'utf-8', (erro, dados) => {
+          if (erro) 
+            console.log('Houve um erro ao tentar ler o arquivo, por favor, tente novamente!');
+          else 
+            console.log(dados);
+        });
+      };
+    };
+
+    module.exports = Leitor;
+
+05) Agora que a funcão readFile já está promissificada dentro do atributo leitor, 
+    vamos refatorar o método Ler():
+
+    const fs = require('fs');
+    const util = require('util');
+
+    class Leitor {
+      constructor() {
+        this.leitor = util.promisify(fs.readFile);
+        this.arquivo = './arquivo.csv';
+      };
+
+      async Ler(caminhoArquivo) {
+        try {
+          return await this.leitor(this.arquivo, 'utf-8');
+        } 
+        catch(erro) {
+          return undefined;
+        }
+      };
+    };
+
+    module.exports = Leitor;
+
+06) Armazenando o retorno do método Ler() dentro de uma variável:
+
+    OBS: Aqui entra um detalhe muito importante. 
+    Como estaremos lidando com o retorno de uma funcão assíncrona, 
+    precisaremos armazenar essa varíavel contendo os dados do método Ler() dentro de uma função. 
+    Essa função será assíncrona, e na operação de armazenar os dados vindos do método, 
+    também precisaremos usar o await. 
+
+    const Leitor = require('./Leitor');
+
+    const teste_leitura = new Leitor();
+
+    const arquivo = './arquivo.csv';
+
+    async function Main() {
+      const dados = await teste_leitura.Ler(arquivo);
+    };
+
+    Main();
